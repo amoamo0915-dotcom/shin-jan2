@@ -1,0 +1,53 @@
+<!doctype html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>しんたろうジャンケン2</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#f8fafc;background:#101725}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#294166,#101725 72%);min-height:100vh}main{max-width:850px;margin:auto;padding:18px 14px 70px}.panel{background:#1c2b44;border:1px solid #3c5170;border-radius:18px;padding:20px;margin:15px 0}h1{font-size:clamp(30px,7vw,53px);margin:8px 0}h2{margin:0 0 14px}.muted,.note{color:#b8c9df}.note{font-size:13px;line-height:1.7}.hidden{display:none!important}.pill{display:inline-block;border-radius:99px;background:#344d70;padding:7px 12px;font-size:13px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}button{border:0;border-radius:12px;background:#ffcd58;color:#19243b;font-weight:800;font-size:15px;padding:13px 12px;cursor:pointer}button.secondary{background:#425b7c;color:white}button.danger{background:#7e4055;color:white}button:disabled{opacity:.4;cursor:not-allowed}input{width:100%;background:#101c30;border:1px solid #5a7291;color:white;padding:12px;border-radius:10px;font-size:16px;margin:5px 0 12px}label{display:block;font-size:14px;font-weight:700}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(93px,1fr));gap:7px}.player{background:#2c405f;border-radius:12px;text-align:center;padding:11px 4px;overflow-wrap:anywhere;font-size:12px}.player b{display:block;font-size:24px}.player em{display:block;font-style:normal;font-size:27px}.choices{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.choice{background:#3d5678;color:white}.choice span{display:block;font-size:31px}.message{background:#304968;border-left:4px solid #ffcd58;border-radius:8px;padding:15px;font-weight:700;line-height:1.6}.rules{line-height:1.85;padding-left:23px}#notice{color:#ffda86;min-height:25px}.target{display:block;width:100%;margin:8px 0;text-align:left}@media(max-width:460px){.panel{padding:15px}.player{font-size:10px;padding:9px 2px}.player b{font-size:20px}.choices{gap:5px}.choice{padding:11px 2px}}
+</style></head><body><main><header><span class="pill">🖖 NEW VERSION</span><h1>しんたろうジャンケン 2</h1><p class="muted">パーの指名攻撃 × フォーの読み合い</p></header>
+<section id="home"><div class="panel"><h2>📜 ルール</h2><ul class="rules"><li>通常の負け：グー <b>0</b>・チョキ <b>2</b>・パー <b>5</b>点</li><li><b>パーが勝ったら</b>、パーの勝者それぞれがグーの人を1人指名し、5点を与える。<b>集中攻撃・合算あり</b></li><li>フォー独占：自分以外の全員に<b>2点</b></li><li>フォー被り：フォーを出した人全員に<b>4点</b></li><li>フォーなしで3連続あいこ：全員<b>10点</b></li><li>誰かが累計<b>13点</b>に達したらマッチ終了。最高得点が最下位</li></ul><p class="note">フォーの有無はプライベートルームの作成者が選べます。CPUは堅太郎・攻太郎・四太郎・乱太郎・普太郎の5タイプ。</p></div>
+<div class="panel"><h2>遊び方</h2><label>あなたの名前<input id="name" maxlength="12" value="あなた"></label><div class="row"><button id="open">🌐 オープンマッチ</button><button id="cpu" class="secondary">🤖 CPU4人と対戦</button></div><p class="note">オープンマッチは5人で自動開始。CPU戦はすぐに始まります。</p></div>
+<div class="panel"><h2>🔒 プライベートルーム</h2><label>ルーム名<input id="roomName" maxlength="24" placeholder="例：金曜の飲み会"></label><label>合言葉（4〜32文字）<input id="pass" type="password" maxlength="32" placeholder="友達に共有する合言葉"></label><label style="margin-bottom:15px"><input id="allowFour" type="checkbox" checked style="width:auto;margin:0 7px 0 0">フォーを使用する（作成者が設定）</label><div class="row"><button id="create">ルームを作成</button><button id="join" class="secondary">ルームに参加</button></div><p class="note">2〜10人で対戦可能。人数不足ならホストがCPUを追加できます。参加者はルーム名と合言葉で入室してください。</p></div></section>
+<section id="lobby" class="panel hidden"><h2 id="lobbyTitle">マッチング中</h2><p id="lobbyInfo" class="muted"></p><div id="roster" class="grid"></div><div id="hostPanel" class="hidden" style="margin-top:20px"><label>追加するCPUの人数<input id="cpuCount" type="number" min="0" max="9" value="0"></label><div class="row"><button id="setCpu" class="secondary">CPUを反映</button><button id="start">ゲーム開始</button></div></div><p style="margin-top:20px"><button id="leave" class="danger">退出する</button></p></section>
+<section id="game" class="hidden"><div class="panel"><div class="row"><span id="gameNo" class="pill"></span><span id="draws" class="pill"></span></div><h2 style="margin-top:18px">スコア</h2><div id="players" class="grid"></div></div><div id="choosePanel" class="panel"><h2>手を選ぼう</h2><p class="muted">全員が決めたら一斉公開。選び直しはできません。</p><div id="choices" class="choices"></div><p id="waiting" class="muted"></p></div><div id="targetPanel" class="panel hidden"><h2>🖐️ パーの指名攻撃！</h2><p id="targetInfo" class="muted"></p><div id="targetChoices"></div></div><div id="resultPanel" class="panel hidden"><h2>結果発表！</h2><div id="hands" class="grid"></div><p id="summary" class="message"></p><p class="note">約5秒後に次の勝負へ進みます。</p></div><div class="panel"><button id="quit" class="danger">退出する</button></div></section>
+<section id="end" class="panel hidden"><h2>🏁 マッチ終了！</h2><div id="final"></div><button id="back">トップへ戻る</button></section><p id="notice" role="alert"></p></main>
+<script src="/socket.io/socket.io.js"></script><script>
+const socket=io(),$=id=>document.getElementById(id),icons=['✊','✌️','🖐️','🖖'],handNames=['グー','チョキ','パー','フォー'];let room=null,queued=false;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function show(id){['home','lobby','game','end'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
+function notice(t){$('notice').textContent=t;setTimeout(()=>{if($('notice').textContent===t)$('notice').textContent=''},7000)}
+function userName(){return $('name').value.trim()||'あなた'}
+function roomAction(event){if(!socket.connected)return notice('サーバーに接続できません');socket.emit(event,{name:userName(),label:$('roomName').value.trim(),pass:$('pass').value,allowFour:$('allowFour').checked})}
+function render(r){
+room=r;const me=r.players.find(p=>p.id===socket.id);
+if(r.status==='waiting'){
+show('lobby');$('lobbyTitle').textContent=r.mode==='open'?'🌐 オープンマッチング中':'🔒 '+r.label;
+$('lobbyInfo').textContent=`${r.players.length} / ${r.mode==='open'?5:10} 人 ・ フォー${r.allowFour?'あり':'なし'}`+(r.mode==='open'?' ・ 5人で自動開始':' ・ 2〜10人で開始');
+$('roster').innerHTML=r.players.map(p=>`<div class="player">${esc(p.name)}<b>${p.cpu?'🤖':'👤'}</b></div>`).join('');
+const host=r.mode==='private'&&r.host===socket.id;$('hostPanel').classList.toggle('hidden',!host);$('start').disabled=r.players.length<2||r.players.length>10;
+const humans=r.players.filter(p=>!p.cpu).length;$('cpuCount').max=10-humans;$('cpuCount').value=r.players.length-humans;return}
+if(r.status==='ended'){
+show('end');const order=[...r.players].sort((a,b)=>b.score-a.score),max=order[0].score;
+$('final').innerHTML=`<p class="message">最下位：${order.filter(p=>p.score===max).map(p=>esc(p.name)).join('・')}（${max}点）</p><ol>${order.map(p=>`<li>${esc(p.name)}：${p.score}点</li>`).join('')}</ol>`;return}
+show('game');$('gameNo').textContent=`第${r.game}ゲーム・${r.round}回目`;$('draws').textContent=`連続あいこ ${r.draws}/3 ・ フォー${r.allowFour?'あり':'なし'}`;
+$('players').innerHTML=r.players.map(p=>`<div class="player">${esc(p.name)}${p.cpu?' 🤖':''}<b>${p.score}</b>pt</div>`).join('');
+$('choosePanel').classList.toggle('hidden',r.phase!=='choose');$('targetPanel').classList.toggle('hidden',r.phase!=='target');$('resultPanel').classList.toggle('hidden',r.phase!=='result');
+if(r.phase==='result'){$('hands').innerHTML=r.players.map((p,i)=>`<div class="player">${esc(p.name)}<em>${icons[r.result.hands[i]]}</em>+${r.result.delta[i]}pt</div>`).join('');$('summary').textContent=r.result.summary;return}
+if(r.phase==='target'){
+const isAttacker=r.targets.some(i=>r.players[i].id===socket.id);
+$('targetInfo').textContent=isAttacker&&!me.targeted?'グーの人を1人選んで5点を与えよう！':`パー勝者の指名待ち（${r.targets.filter(i=>r.players[i].targeted).length}/${r.targets.length}人）`;
+$('targetChoices').innerHTML=isAttacker&&!me.targeted?r.players.filter(p=>p.id!==socket.id).map(p=>`<button class="target secondary" data-target="${esc(p.id)}" disabled>${esc(p.name)}</button>`).join(''):'';
+/* Server does not reveal hands before result: server supplies eligible rock targets separately. */
+if(isAttacker&&!me.targeted){$('targetChoices').innerHTML=(r.rockTargets||[]).map(p=>`<button class="target secondary" data-target="${esc(p.id)}">✊ ${esc(p.name)} に5点</button>`).join('');document.querySelectorAll('[data-target]').forEach(b=>b.onclick=()=>socket.emit('target',b.dataset.target))}
+return}
+const count=r.players.filter(p=>p.submitted).length;$('waiting').textContent=me?.submitted?`選択済み！ 他の人を待っています（${count}/${r.players.length}）`:`選択待ち ${count}/${r.players.length}`;
+$('choices').innerHTML=handNames.map((n,i)=>`<button class="choice" data-hand="${i}" ${!me||me.submitted||(i===3&&!r.allowFour)?'disabled':''}><span>${icons[i]}</span>${n}</button>`).join('');
+document.querySelectorAll('[data-hand]').forEach(b=>b.onclick=()=>socket.emit('hand',Number(b.dataset.hand)));
+}
+$('open').onclick=()=>{if(!socket.connected)return notice('サーバーに接続できません');socket.emit('openMatch',{name:userName()});queued=true;show('lobby');$('lobbyTitle').textContent='🌐 マッチング中';$('lobbyInfo').textContent='参加者を探しています…';$('roster').innerHTML='';$('hostPanel').classList.add('hidden')};
+$('cpu').onclick=()=>{if(!socket.connected)return notice('サーバーに接続できません');socket.emit('cpuMatch',{name:userName()})};
+$('create').onclick=()=>roomAction('createPrivate');$('join').onclick=()=>roomAction('joinPrivate');
+$('setCpu').onclick=()=>socket.emit('setCpu',Number($('cpuCount').value));$('start').onclick=()=>socket.emit('startPrivate');
+function leave(){if(queued){socket.emit('cancelQueue');queued=false}else socket.emit('leave');room=null;show('home')}
+$('leave').onclick=leave;$('quit').onclick=()=>{if(confirm('退出しますか？ 対戦中ならCPUが引き継ぎます。'))leave()};$('back').onclick=leave;
+socket.on('queued',d=>{$('lobbyInfo').textContent=`マッチング待ち ${d.count} / 5人`});socket.on('state',r=>{queued=false;render(r)});socket.on('errorMessage',notice);
+socket.on('disconnect',()=>notice('接続が切れました。再接続後は参加し直してください。'));
+socket.on('connect',()=>{if(room){room=null;show('home');notice('再接続しました。参加し直してください。')}});
+</script></body></html>
