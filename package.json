@@ -1,0 +1,1 @@
+{"name":"shintaro-janken-2","version":"2.0.0","private":true,"scripts":{"start":"node server.js"},"engines":{"node":">=20"},"dependencies":{"socket.io":"^4.8.1"}}
